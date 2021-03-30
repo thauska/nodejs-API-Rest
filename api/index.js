@@ -5,10 +5,29 @@ const NotFound = require('./errors/NotFound')
 const CampoInvalido = require('./errors/CampoInvalido')
 const DadosNaoFornecidos = require('./errors/DadosNaoFornecidos')
 const ValorNaoSuportado = require('./errors/ValorNaoSuportado')
+const formatosAceitos = require('./Serializador').formatosAceitos
 
 const app = express()
 
 app.use(express.json())
+
+app.use((req, res, proximo) => {
+    let formatoRequisitado = req.header('Accept')
+
+    if(formatoRequisitado === '*/*') {
+        formatoRequisitado = 'application/json'
+    }
+
+    if(formatosAceitos.indexOf(formatoRequisitado) === -1) {
+        res.status(406)
+        res.end()
+        return
+    }
+
+    res.setHeader('Content-Type', formatoRequisitado)
+
+    proximo()
+})
 
 app.use('/api/fornecedores', roteador)
 
@@ -22,7 +41,7 @@ app.use((erro, req, res, proximo) => {
     if(erro instanceof ValorNaoSuportado) status = 406
 
     res.status(status)
-    
+
     res.send(
         JSON.stringify({
             mensagem: erro.message,
