@@ -1,5 +1,6 @@
 const Modelo = require('./ModeloTabelaProduto')
 const instancia = require('../../../database')
+const NotFound = require('../../../errors/NotFound')
 
 module.exports = {
     listar(idFornecedor, criterios = {}) {
@@ -33,7 +34,7 @@ module.exports = {
         })
 
         if (!encontrado) {
-            throw new Error('Produto não foi encontrado!')
+            throw new NotFound('Produto')
         }
 
         return encontrado

@@ -78,6 +78,26 @@ roteador.get('/:id', async (req, res, proximo) => {
     }
 })
 
+roteador.head('/:id', async (req, res, proximo) => {
+    try {
+        const dados = {
+            id: req.params.id,
+            fornecedor: req.fornecedor.id
+        }
+
+        const produto = new Produto(dados)
+        await produto.carregar()
+        res.set('ETag', produto.versao)
+        const timestamp = (new Date(produto.dataAtualizacao)).getTime()
+        res.set('Last-modified', timestamp)
+        res.status(200)
+        res.end()
+
+    } catch (erro) {
+        proximo(erro)
+    }
+})
+
 roteador.put('/:id', async (req, res, proximo) => {
     try {
         // Object.assign() -> junta objetos
