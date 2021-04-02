@@ -13,6 +13,11 @@ const app = express()
 app.use(express.json())
 
 app.use((req, res, proximo) => {
+    res.set('X-Powered-By', 'Gatito Petshop')
+    proximo()
+})
+
+app.use((req, res, proximo) => {
     let formatoRequisitado = req.header('Accept')
 
     if(formatoRequisitado === '*/*') {
