@@ -35,6 +35,11 @@ app.use((req, res, proximo) => {
     proximo()
 })
 
+app.use((req, res, proximo) => {
+    res.set('Access-Control-Allow-Origin', '*')
+    proximo()
+})
+
 app.use('/api/fornecedores', roteador)
 
 app.use((erro, req, res, proximo) => {
