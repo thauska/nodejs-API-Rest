@@ -1,6 +1,5 @@
 const express = require('express')
 const config = require('config')
-const roteador = require('./routes/fornecedores')
 const NotFound = require('./errors/NotFound')
 const CampoInvalido = require('./errors/CampoInvalido')
 const DadosNaoFornecidos = require('./errors/DadosNaoFornecidos')
@@ -40,7 +39,11 @@ app.use((req, res, proximo) => {
     proximo()
 })
 
+const roteador = require('./routes/fornecedores')
 app.use('/api/fornecedores', roteador)
+
+const roteadorV2 = require('./routes/fornecedores/routes.v2')
+app.use('/api/v2/fornecedores', roteadorV2)
 
 app.use((erro, req, res, proximo) => {
     let status = 500
