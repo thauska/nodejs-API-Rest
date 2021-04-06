@@ -1,6 +1,5 @@
 const express = require('express')
 const config = require('config')
-const roteador = require('./routes/fornecedores')
 const NotFound = require('./errors/NotFound')
 const CampoInvalido = require('./errors/CampoInvalido')
 const DadosNaoFornecidos = require('./errors/DadosNaoFornecidos')
@@ -11,6 +10,11 @@ const { SerializadorErro } = require('./Serializador')
 const app = express()
 
 app.use(express.json())
+
+app.use((req, res, proximo) => {
+    res.set('X-Powered-By', 'Gatito Petshop')
+    proximo()
+})
 
 app.use((req, res, proximo) => {
     let formatoRequisitado = req.header('Accept')
@@ -30,7 +34,16 @@ app.use((req, res, proximo) => {
     proximo()
 })
 
+app.use((req, res, proximo) => {
+    res.set('Access-Control-Allow-Origin', '*')
+    proximo()
+})
+
+const roteador = require('./routes/fornecedores')
 app.use('/api/fornecedores', roteador)
+
+const roteadorV2 = require('./routes/fornecedores/routes.v2')
+app.use('/api/v2/fornecedores', roteadorV2)
 
 app.use((erro, req, res, proximo) => {
     let status = 500
